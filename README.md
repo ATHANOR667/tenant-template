@@ -1,62 +1,162 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ATHANOR667/tenant-template
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+### Summary
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This repository is a modular Laravel 12 application that serves as a robust template for building systems with advanced administrative backends. It features a multi-tiered user structure with 'Admins' and a 'Super-Admin', complete with role-based permissions, comprehensive activity logging, and a user banning system.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Purpose
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The project aims to provide a foundational boilerplate for complex web applications, eliminating the need to build common but sophisticated features like modular architecture, multi-level authentication, and detailed auditing from scratch. It is particularly well-suited for projects requiring a secure and feature-rich administration panel.
 
-## Learning Laravel
+### Key Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+• Modular architecture using `nwidart/laravel-modules`.
+• Multi-tiered authentication with distinct 'Admin' and 'Super-Admin' guards.
+• Comprehensive role and permission management via `spatie/laravel-permission`.
+• Detailed user connection and model activity logging.
+• Built-in user banning system with configurable levels and durations.
+• Dynamic UI powered by Livewire and styled with Tailwind CSS.
+• Background job processing with Laravel Horizon and application monitoring with Laravel Pulse.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Technical Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Languages
 
-## Laravel Sponsors
+PHP, JavaScript, CSS (Sass)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Frameworks
 
-### Premium Partners
+Laravel 12, Livewire 3, Tailwind CSS 4
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Key Dependencies
 
-## Contributing
+nwidart/laravel-modules, livewire/livewire, spatie/laravel-permission, laravel/horizon, laravel/pulse, barryvdh/laravel-dompdf, twilio/sdk, stevebauman/location
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Tools
 
-## Code of Conduct
+Vite, Composer, PHPUnit, Laravel Pint, Laravel Sail (Docker)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Project Structure
 
-## Security Vulnerabilities
+### Architecture
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The application is built on a modular architecture using the `nwidart/laravel-modules` package. The core administrative functionality is encapsulated within the `AdminBase` module, promoting code organization, separation of concerns, and reusability. Within both the root application and the module, it follows the standard Model-View-Controller (MVC) pattern.
 
-## License
+### Main Components
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# tenant-template
+**AdminBase Module** `Modules/AdminBase/`
+
+The central module containing all logic for the administration panel, including authentication for Admins and Super-Admins, user management, roles, permissions, and extensive logging features.
+
+**Multi-Guard Authentication** `config/auth.php, Modules/AdminBase/app/Models/, Modules/AdminBase/app/Http/Middleware/`
+
+Implements separate authentication systems for 'Admin' and 'Super-Admin' users, each with its own model, middleware, and routes, allowing for distinct access levels and privileges.
+
+**Logging & Auditing System** `Modules/AdminBase/app/Services/, Modules/AdminBase/app/Models/, Modules/AdminBase/app/Livewire/Logs/`
+
+A suite of services, models, and Livewire components for tracking user connections (IP, location, device), and recording all model creations, updates, and deletions for auditing purposes.
+
+**Role & Permission Management** `Modules/AdminBase/database/seeders/RoleSeeder.php, Modules/AdminBase/resources/views/super-admin/pages/manage-admins.blade.php`
+
+Utilizes the `spatie/laravel-permission` package, with Livewire components providing a user interface for the Super-Admin to manage roles and assign permissions to Admins.
+
+**Background Job Processing** `app/Jobs/UnbanExpiredBansJob.php, app/Providers/HorizonServiceProvider.php`
+
+Uses Laravel's queue system, monitored by Horizon, to handle background tasks such as automatically lifting expired user bans.
+
+### Directory Structure
+
+The project follows a standard Laravel directory structure, which is extended by a top-level `Modules/` directory. The `AdminBase` module within it mirrors a typical Laravel application, containing its own `app`, `config`, `database`, `resources`, and `routes` subdirectories, effectively creating a self-contained application within the main project.
+
+## Setup Instructions
+
+### Prerequisites
+
+• PHP ^8.2
+• Composer
+• Node.js & npm
+• A supported database (e.g., MySQL, PostgreSQL, SQLite)
+• Docker (recommended for Laravel Sail)
+
+### Installation Steps
+
+1. Clone the repository: `git clone <repository-url>`
+2. Navigate into the project directory: `cd <project-directory>`
+3. Install PHP dependencies: `composer install`
+4. Install JavaScript dependencies: `npm install`
+5. Create an environment file: `cp .env.example .env`
+6. Generate an application key: `php artisan key:generate`
+7. Configure your database credentials in the `.env` file.
+8. Run database migrations and seeders: `php artisan migrate --seed`
+9. Build front-end assets: `npm run build`
+
+### Configuration
+
+The main application configuration is managed through the `.env` file. You must set up the `DB_*` variables for database connectivity and `APP_URL`. For features like email (OTP) and SMS notifications, the `MAIL_*` and `TWILIO_*` variables must also be configured.
+
+### Running Locally
+
+The project includes a convenient script for local development. Run `composer run dev`. This command uses `concurrently` to start the PHP development server, a queue worker, the Pail log watcher, and the Vite front-end server simultaneously.
+
+## Configuration
+
+### Environment Variables
+
+**`APP_URL`** (Required)
+
+The base URL of the application.
+
+**`DB_CONNECTION`** (Required)
+
+The database driver to use (e.g., mysql, pgsql, sqlite).
+
+**`DB_DATABASE`** (Required)
+
+The name of the database.
+
+**`QUEUE_CONNECTION`** (Required)
+
+The driver for the queue system (defaults to 'database').
+
+**`MAIL_MAILER`**
+
+The driver for sending emails (e.g., smtp, log). Required for OTP functionality.
+
+**`TWILIO_SID`**
+
+Twilio Service ID for SMS/WhatsApp notifications.
+
+**`TWILIO_TOKEN`**
+
+Twilio authentication token.
+
+### Configuration Files
+
+• `config/auth.php`: Defines the `admin` and `super-admin` authentication guards and their corresponding Eloquent providers.
+• `config/filesystems.php`: Configures storage disks for public and private files.
+• `config/pulse.php` & `config/horizon.php`: Configuration for Laravel's monitoring and queue management dashboards.
+• `modules_statuses.json`: A file used by `nwidart/laravel-modules` to enable or disable modules.
+
+## Development
+
+### Code Style
+
+The codebase adheres to Laravel's standard conventions and PSR standards. The inclusion of `laravel/pint` in development dependencies suggests that an automated code style fixer is used to maintain consistency. Business logic is well-encapsulated in Service classes, and reusable model logic is abstracted into Traits.
+
+### Testing
+
+The project is set up with PHPUnit for testing. Basic feature and unit test examples are present, but no application-specific tests were found in the provided files. The structure is in place to add comprehensive tests.
+
+### Contributing
+
+To contribute, new features should be developed within the existing modular structure. Administrative features should be added to the `AdminBase` module. All code should follow the established style, and new functionality should ideally be accompanied by unit or feature tests.
+
+## Additional Notes
+
+The project is named 'tenant-template' in the README, which strongly implies its intended use as a foundation for multi-tenant applications. While no explicit multi-tenancy package is installed, the modular and multi-user architecture provides a solid starting point for such a system. The `Admin` model includes fields for identity verification (`pieceIdentiteRecto`, `pieceIdentiteVerso`), indicating it's designed for a formal, high-security environment.
+
+---
+
+*Generated by Copository using gemini-2.5-pro*
