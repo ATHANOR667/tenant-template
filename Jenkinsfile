@@ -4,17 +4,20 @@ pipeline {
     stages {
         stage('Build & Deploy') {
             steps {
-                // Utiliser une image Docker contenant Docker/Docker Compose pour l'exécution
-                // NOTE: Cette ligne nécessite que le Docker Socket de l'hôte soit monté sur l'agent Jenkins.
-                docker.image('docker/compose:latest').inside {
 
-                    // --- 1. Build Image ---
-                    echo 'Demarrage de la construction de l’image Docker...'
-                    sh 'docker build -t tenant-template .'
+                script {
+                    // Utiliser une image Docker contenant Docker/Docker Compose pour l'exécution
+                    // NOTE: Cette ligne nécessite que le Docker Socket de l'hôte soit monté sur l'agent Jenkins.
+                    docker.image('docker/compose:latest').inside {
 
-                    // --- 2. Deploy Stack ---
-                    echo 'Demarrage du deploiement avec Docker Compose...'
-                    sh 'docker-compose up -d'
+                        // --- 1. Build Image ---
+                        echo 'Demarrage de la construction de l’image Docker...'
+                        sh 'docker build -t tenant-template .'
+
+                        // --- 2. Deploy Stack ---
+                        echo 'Demarrage du deploiement avec Docker Compose...'
+                        sh 'docker-compose up -d'
+                    }
                 }
             }
         }
