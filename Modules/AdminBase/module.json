@@ -1,0 +1,11 @@
+{
+    "name": "AdminBase",
+    "alias": "adminbase",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AdminBase\\Providers\\AdminBaseServiceProvider"
+    ],
+    "files": []
+}

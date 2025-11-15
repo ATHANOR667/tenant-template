@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full" x-data="{ darkMode: localStorage.getItem('theme') === 'dark', sidebarOpen: false }"
+      :class="{'dark': darkMode}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/trix@2.0.0/dist/trix.css" rel="stylesheet">
+    <script src="https://unpkg.com/trix@2.0.0/dist/trix.js"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
+    @livewireStyles
+    @livewireScripts
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <title>@yield('title')</title>
+</head>
+<body class="h-full bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out flex flex-col min-h-screen font-sans antialiased">
+
+{{-- Global Livewire Loading Spinner --}}
+<div wire:loading class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 bg-opacity-75 transition-opacity duration-300 ease-in-out" x-cloak>
+    <div class="flex flex-col items-center">
+        <svg class="animate-spin h-12 w-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="mt-4 text-white text-lg font-semibold">Chargement...</span>
+    </div>
+</div>
+
+@livewire('adminbase::flash-notification')
+
+<nav class="bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300 ease-in-out">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="{{route('admin.profileView')}}" class="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+            Admin
+        </a>
+
+        <div class="md:hidden">
+            <button @click="sidebarOpen = !sidebarOpen"
+                    class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-blue-500">
+                <svg x-show="!sidebarOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg x-show="sidebarOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-6">
+            @can("customs-logs")
+                <a href="{{route('admin.logsDashboardView')}}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 {{ request()->routeIs('admin.logsDashboardView') ? 'border-b-2 border-blue-500' : '' }}">Logs et Monitoring</a>
+            @endcan
+
+
+            <a href="{{route('admin.profileView')}}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 {{ request()->routeIs('admin.profileView') ? 'border-b-2 border-blue-500' : '' }}">Profil</a>
+
+
+            <form action="{{route('admin.auth.connected.logout')}}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                    Déconnexion
+                </button>
+            </form>
+
+            <button @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+                    class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-blue-500 transition-colors duration-300 ease-in-out"
+                    aria-label="Toggle dark mode">
+                <svg x-show="!darkMode" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.325-7.757l-.707.707M6.343 17.657l-.707.707M16.95 7.05l.707-.707M7.05 16.95l-.707.707M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                </svg>
+                <svg x-show="darkMode" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+         class="md:hidden px-4 py-2 space-y-2 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+
+        @can("customs-logs")
+            <a href="{{route('admin.logsDashboardView')}}" class="block text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 py-1 {{ request()->routeIs('admin.logsDashboardView') ? 'border-l-4 border-blue-500 font-bold pl-3 -ml-1' : '' }}">Logs et Monitoring</a>
+        @endcan
+
+        <a href="{{route('admin.profileView')}}" class="block text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 py-1 {{ request()->routeIs('admin.profileView') ? 'border-l-4 border-blue-500 font-bold pl-3 -ml-1' : '' }}">Profil</a>
+
+
+        <form action="{{route('admin.auth.connected.logout')}}" method="POST" class="pt-2">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="block w-full text-left px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                Déconnexion
+            </button>
+        </form>
+        <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
+            <button @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')"
+                    class="w-full flex items-center justify-center p-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 focus:ring-blue-500 transition-colors duration-300 ease-in-out">
+                <svg x-show="!darkMode" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.325-7.757l-.707.707M6.343 17.657l-.707.707M16.95 7.05l.707-.707M7.05 16.95l-.707.707M12 15a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                <svg x-show="darkMode" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                <span x-text="darkMode ? 'Mode Clair' : 'Mode Sombre'"></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<main class="flex-grow container mx-auto px-4 py-8">
+
+    @yield('content')
+</main>
+
+<footer class="bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-4 text-center shadow-inner mt-auto transition-colors duration-300 ease-in-out">
+    <div class="container mx-auto">
+        <p class="text-sm md:text-base">&copy; {{ date('Y') }} Admin Panel. Tous droits réservés.</p>
+    </div>
+</footer>
+@stack('style')
+@stack('scripts')
+</body>
+</html>

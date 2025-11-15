@@ -1,0 +1,43 @@
+{
+    "name": "nwidart/adminbase",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "require": {
+        "livewire/livewire": "^3.6",
+        "mhmiton/laravel-modules-livewire": "^5.2",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "spatie/laravel-permission": "^6.21",
+        "stevebauman/location": "^7.6",
+        "barryvdh/laravel-dompdf": "^3.1",
+
+
+
+        "laravel/horizon": "^5.34"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Modules\\AdminBase\\": "app/",
+            "Modules\\AdminBase\\Database\\Factories\\": "database/factories/",
+            "Modules\\AdminBase\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\AdminBase\\Tests\\": "tests/"
+        }
+    }
+}
