@@ -21,7 +21,7 @@ pipeline {
 
         success {
             slackSend(
-                channel: '#jenkins-notifications', /
+                channel: '#jenkins-notifications',
                 color: 'good',
                 message: "DEPLOIEMENT RÉUSSI : Job *${env.JOB_NAME}* (#${env.BUILD_NUMBER}) de l'application Laravel sur port *8089*."
             )
