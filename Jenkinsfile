@@ -2,45 +2,40 @@ pipeline {
     agent any
 
     stages {
-        stage('Check Docker Access') {
+        stage('Build & Deploy') {
             steps {
-                echo 'Verification de l’accessibilite de Docker...'
-                sh 'docker info' // Commande pour vérifier si Docker est joignable
-            }
-        }
+                // Utiliser une image Docker contenant Docker/Docker Compose pour l'exécution
+                // NOTE: Cette ligne nécessite que le Docker Socket de l'hôte soit monté sur l'agent Jenkins.
+                docker.image('docker/compose:latest').inside {
 
-        stage('Build Image') {
-            steps {
-                echo 'Demarrage de la construction de l’image Docker...'
-                sh 'docker build -t tenant-template .'
-            }
-        }
+                    // --- 1. Build Image ---
+                    echo 'Demarrage de la construction de l’image Docker...'
+                    sh 'docker build -t tenant-template .'
 
-        stage('Deploy Stack') {
-            steps {
-                echo 'Demarrage du deploiement avec Docker Compose...'
-                sh 'docker-compose up -d'
+                    // --- 2. Deploy Stack ---
+                    echo 'Demarrage du deploiement avec Docker Compose...'
+                    sh 'docker-compose up -d'
+                }
             }
         }
     }
 
     post {
-        // Envoi de la notification en cas de SUCCÈS
+        // Envoi de la notification en cas de SUCCES
         success {
             slackSend(
                 channel: '#jenkins-notifications',
                 color: 'good',
-                message: "DEPLOIEMENT RÉUSSI : Job *${env.JOB_NAME}* (#${env.BUILD_NUMBER}) de l'application Laravel sur port *8089*."
+                message: "DEPLOIEMENT REUSSI : Job *${env.JOB_NAME}* (#${env.BUILD_NUMBER}) de l'application Laravel sur port *8089*."
             )
         }
 
-        // Envoi de la notification en cas d'ÉCHEC
+        // Envoi de la notification en cas d'ECHEC
         failure {
             slackSend(
-                // Assurez-vous que ce canal existe et que le Bot y est invité
                 channel: '#alertes-devops',
                 color: 'danger',
-                message: "ÉCHEC DU DEPLOIEMENT : Job *${env.JOB_NAME}* (#${env.BUILD_NUMBER}) a échoué. Consulter les logs ici : ${env.BUILD_URL}console"
+                message: "ECHEC DU DEPLOIEMENT : Job *${env.JOB_NAME}* (#${env.BUILD_NUMBER}) a echoue. Consulter les logs ici : ${env.BUILD_URL}console"
             )
         }
     }
